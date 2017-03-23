@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title><%= title%></title>
+<link rel='stylesheet' href='stylesheets/bootstrap.min.css'/>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<body>
+<center>
+<h1><%= title%></h1>
+<br>
+<form name="search", method="post", action="/memberSearch">
+<input type="text", size="100",id="search", name="search", placeholder="검색하실 회원의 아이디를 입력하세요."><input type="submit", value="검색">
+</form>
+<form action='/delete' method='post'>
+<br>
+<br>
+<table border="1" class="table table-striped">
+<thead>
+   <tr>
+      <th>#</th>
+      <th>아이디</th>
+      <th>이름</th>
+      <th>이메일</th>
+      <th>가입날짜</th>
+      <th>블랙리스트</th>
+      <th>Delete</th>
+   </tr>
+</thead>
+<!-- 날짜 포멧설정-->
+<%
+   for(var i=0; i<rows.length; i++)
+   {
+      var oneItem = rows[i];
+      var tmp =oneItem.userDate.toString();
+      var tmp2 = tmp.split(' ');
+      
+      var date = tmp2[2] + '-' + tmp2[1]+'-'+tmp2[3];
+%>
+<!-- 데이터 출력-->
+<tbody>
+   <tr>
+      <th scope="row"><%=i+1%></th>
+      <td><%=oneItem.userId%></td>
+      <td><%=oneItem.userName%></td>
+      <td><%=oneItem.userEmail%></td>
+      <td><%=date%></td>
+      <td><a id="demo" href="/blacklist?userId=<%=oneItem.userId%>" onclick="return blackchk();"> 등록  </a></td>
+      
+      <td><input type="checkbox" name="chk_del" value="<%=oneItem.userId%>"></td>
+      <!--위에 수정한거... 다시바꿔야될듯-->
+   </tr>
+</tbody>
+<%
+   }
+%>
+</table>
+   <input type="submit" value="삭제">
+   <button type="button" onClick="history.back()"> 취소
+</center>
+</body>
+</html>
+<!-- 블랙리스트 등록 함수-->
+<script type="text/javascript">
+function blackchk(){
+   var x;
+   if(confirm("블랙리스트에 등록하시겠습니까?")==true){
+      x = "O";
+      return true;
+   }else{
+      x = "X";
+      return false;
+   }
+   document.getElementById("demo").innerHTML = x;
+}
+</script>
+

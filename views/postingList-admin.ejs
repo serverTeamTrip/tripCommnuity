@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title><%= title%></title>
+<link rel='stylesheet' href='bootstrap/css/bootstrap.css'/>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<body>
+<center>
+<h1><%= title%></h1>
+<br>
+<form name="form1", action="/postingSearch" method="post" align="center">
+<input type="text", size="100", name="search", placeholder="여행일지 검색"><input type="submit", value="검색">
+</form>
+<form action='/postingDelete' method='post'>
+<br>
+<br>
+<table border="1" class='table table-striped'>
+<!-- 테이블 비율 설정-->
+<colgroup style="text-align=center">
+   <col style="width:5%"/>
+   <col style="width:6%"/>
+   <col style="width:6%"/>
+   <col style="width:13%"/>
+   <col style="width:*%"/>
+   <col style="width:18%"/>
+   <col style="width:8%"/>
+   <col style="width:5%"/>
+   <col style="width:5%"/>
+</colgroup>
+   <tr>
+      <td>번호</td>
+      <td>등록자</td>
+      <td>카테고리</td>
+      <td>제목</td>
+      <td>내용</td>
+      <td>사진</td>
+      <td>날짜</td>
+      <td>삭제</td>
+   </tr>
+<!-- 날짜 포멧 설정-->
+<%
+   for(var i=0; i<rows.length; i++)
+   {
+      var oneItem = rows[i];
+      var tmp =oneItem.postingDate.toString();
+      var tmp2 = tmp.split(' ');
+
+      var date = tmp2[2] + '-' + tmp2[1]+'-'+tmp2[3];
+%>
+<!-- 데이터 가져와서 출력-->
+   <tr>
+      <td><a href="/postingView?postingId=<%=oneItem.postingId%>"><%=oneItem.postingId%></a></td>
+      <td><%=oneItem.userId%></td>
+      <td><%=oneItem.postingCategory%></td>
+      <td><%=oneItem.postingTitle%></td>
+      <td><%=oneItem.postingContent%></td>
+      <td><img src="<%=oneItem.postingImage%>" /></td>
+      <td><%=date%></td>
+      <td><input type="checkbox", name="chk_del" value="<%=oneItem.postingId%>"></td>
+   </tr>
+<%
+   }
+%>
+</table>
+   <input type="submit",  value="삭제">
+   <input type="button", value="취소", onClick="history.go(-1);">
+</center>
+</body>
+</html>

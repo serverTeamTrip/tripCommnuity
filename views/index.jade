@@ -1,0 +1,30 @@
+doctype html
+html
+   head
+      meta(charset='UTF-8')
+      title login page
+      link(rel="stylesheet", href="stylesheets/index.css")
+   body
+   .wrapper
+      .container
+         .container2
+            h1 MEMBER LOGIN
+            form(action="/login", method="POST")
+               input(type="text", name="userId", placeholder="userid")
+               input(type="password", name="userPassword", placeholder="userpasswd")
+               a(href="/members", style="text-decoration:none")회원가입 
+               a(href="/id", style="text-decoration:none")아이디 찾기/ 
+               a(href="/password", style="text-decoration:none")비밀번호 찾기 
+               br
+               button#login-button(type='submit', style='width:250px') Login
+         ul.bg-bubbles
+            li
+            li
+            li
+            li
+            li
+            li
+            li
+            li
+            li
+            li

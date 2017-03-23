@@ -1,0 +1,52 @@
+doctype html
+html
+  head
+    script(src='/http://code.jqeury.com/jquery-1.11.1.min.js')
+    meta(charset='UTF-8')
+    title 여행일지 수정
+  body
+    center
+      form(name='form',method='post', action='/postingEdit', enctype='multipart/form-data')
+        table
+          tr
+            td
+              select(id='selectBox' name='category')
+                option(id='all',value='all', selected='selected') 전체
+                option(id='traffic',value='traffic') 교통
+                option(id='restaurant', value='restaurant') 맛집
+                option(id='rest', value='rest') 숙소
+                option(id='attraction', value='attraction') 명소
+            td
+              input(type='text',size='129',name='title', value='#{postingTitle}')
+          tr
+            td
+            td
+              input(type='file',name='image')
+          tr
+            td
+              div(align='center')
+                | 여행일지
+                br
+                | 내용
+            td
+              textarea(name='content', style='width:802px; height:600px;') #{postingContent}
+            td
+              input(type="hidden", name="postingId",value='#{postingId}')
+        div(align='right')
+          input(type='submit', value='등록 완료')
+          input(type='button', value='취소', onclick='history.back();')
+        script.
+          var tmp=#{postingCategory};
+          console.log('12312412421412412412');
+          console.log(tmp.value);
+          if(tmp.value=='traffic'){
+             $("#selectBox").val('traffic').attr("selected", "selected");
+             console.log('12412412');
+          }else if(tmp.value=='restaurant'){
+             $("#selectBox").val('restaurant').attr("selected", "selected");
+          }else if(tmp.value=='rest'){
+             $("#selectBox").val("3");
+          }else if(tmp.value=='attraction'){
+             $("#selectBox").val("4");
+          }
+     

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title><%= title%></title>
+   <link rel='stylesheet' href= '/stylesheets/bootstrap.min.css'/>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<body>
+<center>
+<h1><%= title%></h1>
+
+<form>
+<br>
+<br>
+<table border="1" class="table table-striped">
+<thead>
+   <tr>
+      <th>#</th>
+      <th>아이디</th>
+      <th>이름</th>
+      <th>이메일</th>
+      <th>가입날짜</th>
+      <th>일반회원전환</th>
+   </tr>
+</thead>
+<!-- 날짜 포멧 설정-->
+<%
+   for(var i=0; i<rows.length; i++)
+   {
+      var oneItem = rows[i];
+      var tmp =oneItem.userDate.toString();
+      var tmp2 = tmp.split(' ');
+      
+      var date = tmp2[2] + '-' + tmp2[1]+'-'+tmp2[3];
+%>
+<!-- 리스트 가져오기-->
+<tbody>
+   <tr>
+      <th scope="row"><%=i+1%></th>
+      <td><%=oneItem.userId%></td>
+      <td><%=oneItem.userName%></td>
+      <td><%=oneItem.userEmail%></td>
+      <td><%=date%></td>
+      <td><a id="demo" href="/blacklist2user?userId=<%=oneItem.userId%>" onclick="return blackchk();"> 전환  </a></td>
+      <!--위에 수정한거... 다시바꿔야될듯-->
+   </tr>
+</tbody>
+<%
+   }
+%>
+</table>
+   <button type="button" onClick="history.back()"> 취소
+</center>
+</body>
+</html>
+<script type="text/javascript">
+<!-- 블랙리스트 일반회원 전환 함수-->
+function blackchk(){
+   var x;
+   if(confirm("일반회원으로 전환하시겠습니까?")==true){
+      x = "O";
+      return true;
+   }else{
+      x = "X";
+      return false;
+   }
+   document.getElementById("demo").innerHTML = x;
+}
+</script>
+

@@ -1,0 +1,315 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<title>여행지도</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link rel="canonical" href="http://www.alessioatzeni.com/wp-content/tutorials/jquery/CSS3-digital-clock/index.html">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800,700" rel="stylesheet" type="text/css">
+	<style>
+	.gm-style-iw{
+		min-width:100px;
+		min-height:20px;
+		text-align:center;
+	}
+	.gm-style canvas{
+		display:block !important;
+	}
+	.gm-style-iw + div{
+		display:none !important;
+	}
+	.gmnoprint{
+		right:90% !important;
+	}
+	</style>
+</head>
+<body>
+<article id="wrapper" class="row">
+        <div style="margin-top:80px;" class="top">
+           <div class="top-left">
+              <div class="clock">
+                 <div id="Date"></div>
+                 <ul>
+                    <li id="hours",bgcolor="red" ></li>
+                    <li id="point",bgcolor="red">:</li>
+                    <li id="min"></li>
+                    <li id="point">:</li>
+                    <li id="sec"></li>
+                 </ul>
+              </div>
+           </div>
+           <div class="top-right">
+              <iframe id="forecast_embed" type="text/html" frameborder="0" height="240" width="100%" src="http://forecast.io/embed/#lat=37.5301251&lon=127.1237619&name=GangdongCity&color=#ffffff&units=si"></iframe>
+           </div>
+        </div>
+	<div id="chat", style="margin-top:35px">
+		<div id="world" >
+			<div class="room_chat"><!-- style="display:none"-->
+				<div id="message"></div>
+				<input type="text" id="chat_message" value="Hello!!!">
+				<button id="send_message">Send</button>
+			</div>
+		</div>
+	</div>
+	<div id="hide-show">hide</div>
+	<div><div class="container-fluid">
+   <div class="row">
+      <div class="col-md-3"><!--여긴 오른쪽으로 밀기위한 빈공간(조절가능)다른거 집어넣을 떄 여기다가-->
+         <input type="button" id="hide-show2" onclick="hideshow();" value="날씨&온도"/>
+      </div>
+      <div class="col-md-6"><form class="form-inline", method="post", action="postingSearch">
+  <div class="form-group">
+    <input type="text" class="form-control" name="search" size="50" id="search" placeholder="여행일지 검색">
+  </div>
+  <input type="submit" class="btn btn-default" value="검색">
+</form></div>
+<div class="col-md-3", stlye="margin-top:15px"><a href="/newPassword">비밀번호 변경</a><a href="/">  로그아웃</a><!--h5>접속중인 사용자 수:</h5> <h5 id="num"></h5--></div>
+   </div>
+</div></div>
+	<div id="map"></div>
+</article>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAq6nNy1NEvU4fSZptS-oQGTsOux81gs8"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="javascripts/core.js"></script>
+</body>
+</html>
+
+
+<script type="text/javascript">
+var show2 = 1; 
+
+/*날짜,시간,날씨 확인기능 숨기기&보이기*/
+function hideshow(){
+     if(show2==1){
+         show2=0;
+         $(".top").hide();
+     }else{
+         show2=1;
+         $(".top").show();
+     }
+}
+
+var ck = document.cookie.toString();
+var tmp = ck.split('=');
+var qwer = tmp[1]; 
+
+/* 채팅을위한 socket.io구현 */
+
+      var socket=io.connect();
+      socket.on('smart',function(data){
+      var output = data.split('+');
+      //ouput[1]은 id 
+      if(output[1]=='root'){
+         $("#message").append('[공지사항]: '+output[0]+'<BR>').css('color','oragne');
+      }else{
+         $("#message").append(output[1]+': '+output[0]+'<BR>');
+      }
+   });
+   document.getElementById('send_message').onclick=function(){
+      var text = document.getElementById('chat_message').value +'+'+ qwer;
+      socket.emit('sendmsg',text);
+      $('#chat_message').val('');
+/*
+socket통신날리고 message text초기화
+*/
+};
+
+   var show = 1;
+   var this_right = $("#chat").width();
+   $("#hide-show").css({right:this_right+"px"});
+   $("#hide-show").click(function(){
+      //hide
+      if(show==1){
+         show=0;
+         $(this).text("show");
+         $("#chat").hide();
+         $(this).css({right:"0"});
+      }else{
+         show=1;
+         $(this).text("hide");
+         $("#chat").show();
+         $(this).css({right:this_right});
+      }
+   /*채팅화면 보이게하고 안보이게 하는 기능 jquery*/
+});
+
+
+
+
+var map;
+
+/*여행일지가 저장된 위치(lat,lng)에 marker를 찍기위한 코드*/
+<%
+   for(var i=0; i<rows.length; i++)
+   {
+      var latt = rows[i].positionLat;
+      var lonn = rows[i].positionLon;
+%>
+      placeMarker2(<%=latt%>,<%=lonn%>);
+<%
+   }
+%>
+google.maps.event.addListener(map, "click", function(){
+   $('.contextmenu').hide();
+});
+
+google.maps.event.addListener(map, "rightclick",function(event){
+  var lat = event.latLng.lat();
+  var lng = event.latLng.lng();
+  showContextMenu(event.latLng, lat, lng);
+});
+
+/*여행지도에 marker찍기 */
+function placeMarker2(lat,lng)
+{ 
+var clickedLocation = new google.maps.LatLng(lat,lng);
+console.log(clickedLocation)
+var marker = new google.maps.Marker({      
+   position: clickedLocation,     
+   map: map,  
+   draggable:false,
+   title : ''
+   });
+   
+   marker.addListener("rightclick", function(event){
+      var lat= event.latLng.lat();
+      var lng= event.latLng.lng();
+      showContextMenu2(event.latLng, lat, lng)
+  })
+}
+
+/*우클릭했을 때 메뉴 나오게하는 기능 구현*/
+
+function getCanvasXY(caurrentLatLng){
+      var scale = Math.pow(2, map.getZoom());
+     var nw = new google.maps.LatLng(
+         map.getBounds().getNorthEast().lat(),
+         map.getBounds().getSouthWest().lng()
+     );
+     var worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+     var worldCoordinate = map.getProjection().fromLatLngToPoint(caurrentLatLng);
+     var caurrentLatLngOffset = new google.maps.Point(
+         Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
+         Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
+     );
+     return caurrentLatLngOffset;
+  }
+  function setMenuXY(caurrentLatLng){
+    var mapWidth = $('#map_canvas').width();
+    var mapHeight = $('#map_canvas').height();
+    var menuWidth = $('.contextmenu').width();
+    var menuHeight = $('.contextmenu').height();
+    var clickedPosition = getCanvasXY(caurrentLatLng);
+    var x = clickedPosition.x ;
+    var y = clickedPosition.y ;
+
+     if((mapWidth - x ) < menuWidth)
+         x = x - menuWidth;
+    if((mapHeight - y ) < menuHeight)
+        y = y - menuHeight;
+
+    $('.contextmenu').css('left',x  );
+    $('.contextmenu').css('top',y );
+    };
+
+/*여행지도 우클릭했을때 나오는 기능*/
+  function showContextMenu(caurrentLatLng, lat, lng  ) {
+        var projection;
+        var contextmenuDir;
+        var Lat = lat;
+        var Lng = lng;
+        projection = map.getProjection() ;
+        $('.contextmenu').remove();
+            contextmenuDir = document.createElement("div");
+          contextmenuDir.className  = 'contextmenu';
+          contextmenuDir.innerHTML = "<a href='/posting"+"?"+Lat+"&"+Lng+"',id='menu1'><div class=context, align=center>여행일지 등록<\/div><\/a><a href='/postingList',id='menu2'><div class=context, align=center>여행일지 리스트<\/div><\/a>";
+        $(map.getDiv()).append(contextmenuDir);
+        
+        setMenuXY(caurrentLatLng);
+
+        contextmenuDir.style.visibility = "visible";
+  }
+
+/* marker우클릭했을때 나오는 기능*/
+  function showContextMenu2(caurrentLatLng, lat, lng){
+      var Lat = lat;
+      var Lng = lng;
+      projection = map.getProjection() ;
+      $('.contextmenu').remove();
+      contextmenuDir = document.createElement("div");
+      contextmenuDir.className = 'contextmenu';
+      contextmenuDir.innerHTML = "<a href='postingAsk"+"?"+Lat+"&"+Lng+"', id='menu3'><div class=context, align=center>여행일지 조회<\/div><\/a>";
+      $(map.getDiv()).append(contextmenuDir);
+      setMenuXY(caurrentLatLng);
+      contextmenuDir.style.visibility="visible";
+   }
+</script>
+
+
+<style type="text/css">
+#map_canvas{
+    width: 400px; 
+    height: 300px;
+}
+.contextmenu{
+    visibility:hidden;
+    background:#ffffff;
+    border:1px solid #8888FF;
+    z-index: 10;  
+    position: relative;
+    width: 140px;
+}
+.contextmenu div{
+    padding-left: 5px
+    }
+</style>
+<!--clock-->
+
+<script type="text/javascript">
+
+var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September",
+"October", "November", "December" ];
+var dayNames= ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+
+// Create a newDate() object
+var newDate = new Date();
+
+// Extract the current date from Date object
+newDate.setDate(newDate.getDate());
+
+// Output the day, date, month and year
+$('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + ' ' +
+monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
+setInterval( function() {
+
+// Create a newDate() object and extract the seconds of the current time on the visitor's
+var seconds = new Date().getSeconds();
+
+// Add a leading zero to seconds value
+$("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
+},1000);
+setInterval( function() {
+// Create a newDate() object and extract the minutes of the current time on the visitor's
+var minutes = new Date().getMinutes();
+// Add a leading zero to the minutes value
+$("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
+},1000);
+setInterval( function() {
+// Create a newDate() object and extract the hours of the current time on the visitor's
+var hours = new Date().getHours();
+// Add a leading zero to the hours value
+$("#hours").html(( hours < 10 ? "0" : "" ) + hours);
+}, 1000);
+//});
+</script>
+
+

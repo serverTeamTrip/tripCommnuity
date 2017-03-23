@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta content="text/html; charset=utf-8"/>
+   <title>여행일지 조회</title>
+   <link rel='stylesheet' href= '/stylesheets/bootstrap.min.css'/>
+<link rel="stylesheet" href="http://t.static.blog.naver.net/mylog/versioning//common/css/nblog_comment_readonly-2a03f11.css" type="text/css">
+<link rel="stylesheet" href="http://t.static.blog.naver.net/mylog/versioning//common/css/comment_relay-29b5f4e.css" type="text/css">
+<style type="text/css">
+/*네이버블로그 css*/
+#post-area .post {border-width:0px;border-style:solid;border-color:rgb(0, 0, 0);}
+#post-area .post-back {background:transparent;}
+#post-area .pcol1 {color:rgb(208, 58, 58);font-size:12px;}
+#post-area .pcol2 {color:rgb(138, 131, 126);}
+#post-area .pcol2b {background:rgb(138, 131, 126);}
+#post-area .cline {border-bottom-color:rgb(138, 131, 126);}
+#post-area .pcol3 {color:rgb(208, 58, 58);}
+#post-area .dline {border-top-width:1px;border-top-style:dotted;border-top-color:rgb(208, 58, 58);}
+#post-area .htl {background:transparent;width:15px;height:15px;}
+#post-area .htc {background:transparent;height:15px;}
+#post-area .htr {background:transparent;width:15px;height:15px;}
+#post-area .ftl {background:transparent;width:15px;height:15px;}
+#post-area .ftc {background:transparent;height:15px;}
+#post-area .ftr {background:transparent;width:15px;height:15px;}
+#post-area .bcl {background:transparent;width:15px;}
+#post-area .bcc {background:transparent;}
+#post-area .bcr {background:transparent;width:15px;}
+#post-area .ico1 {background:url(http://blogimgs.naver.com/nblog/skins/poststyle/0127_ico1_up.gif);}
+#post-area .ico2 {background:url(http://blogimgs.naver.com/nblog/skins/poststyle/0127_ico1_down.gif);}
+#post-area .ico3 {background:url(http://blogimgs.naver.com/nblog/skins/poststyle/0127_ico2.gif);}
+#post-area .comment {background:transparent;}
+#post-area .btn {background:url(http://blogimgs.naver.com/nblog/skins/poststyle/0127_input.gif);}
+
+</style>
+</head>
+
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<body>
+<!-- 날짜 포멧 설정-->
+<%
+	var zz = postingDate.toString();
+	var zz2 = zz.split(' ');
+	var zzz = zz2[2] + '-' + zz2[1] + '-' + zz2[3];
+%>
+<center>
+<br>
+<h1><%=postingTitle%></h1>
+<hr>
+<br>
+<div style="font-size:10", align="right">작성자:<%=userId%> 작성시간:<%=zzz%></div>
+<br>
+<div align="center"><img src="<%=postingImage%>" /></div>
+<br><br>
+<div style="font-size:12", align="center"><%=postingContent%></div>
+<br><br>
+<div align="right"><input type="button" value="뒤로" onClick="location.href='postingList'"></div>
+
+<hr>
+<br>
+<!--comment시작-->
+
+<div id="post-area">
+<div class="comment" id="comment">
+<ul class="cmlist type2" id="commentList">
+<!-- 날짜 포멧 설정-->
+<%
+   for(var i=0; i<rows.length; i++)
+   {
+      var oneItem = rows[i];
+      var tmp =oneItem.commentDate.toString();
+      var tmp2 = tmp.split(' ');
+
+      var date = tmp2[2] + '-' + tmp2[1]+'-'+tmp2[3];
+%>
+<li id="commentId<%=oneItem.commentId%>" class="_countableComment">
+<dl >
+<dt class="pc">
+</dt>
+<dt align="left" class="h">
+  <a class="nick pcol2" target="_top"><%=oneItem.userId%></a>
+  <span class="data fil5 pcol2"><%=date%></span>
+  <span class="btns">
+    <a href="#" id="<%=i+1%>" class="_btnModifyForm"><span class="fil7">수정</span></a>
+<span class="fil3 pcol2">|</span>
+    <a href="/commentDelete?commentId=<%=oneItem.commentId%>" class="_btnDeleteComment pcol2 _rosRestrcit _commentRosButton _returnFalse"><span class="fil7">삭제</span></a>
+</span>
+</dt>
+<dd align="left" class="comm pcol2" id="comment<%=i+1%>">
+<%=oneItem.commentContent%>
+<!--input type="hidden" id="contentModify<%=i+1%>" value="<%=oneItem.commentContent%>"/-->
+</dd>
+
+
+<!--수정-->
+<form id="update">
+<dd>
+   <div id="contentModify<%=i+1%>" class="comm_modify" style="display:none;">
+      <textarea id="dnew<%=i+1%>" class="_commentData" style="width:800px; height:50px; resize:none; display:none;"><%=oneItem.commentContent%></textarea>
+      <!-- 새로운 댓글, 일지 번호, 댓글 작성자 보내기-->
+      <input type="hidden", id="anew<%=i+1%>", name="newComment", value="">
+      <input type="hidden", id="bnew<%=i+1%>", name="postingId", value="<%=oneItem.postingId%>">
+      <input type="hidden", id="cnew<%=i+1%>", name="commentId", value="<%=oneItem.commentId%>">
+      <button id="new<%=i+1%>" class="update" style="height:25px" value="">수정</button>
+      <button id="btn1" style="height:25px" onClick="cancel()">취소</button>
+   </div>
+</dd>
+</form>
+
+</dl>
+</li>
+<%
+   }
+%>
+</ul>
+</div>
+</div>
+<form name="posting" method="post" action="postingComment">
+<input type="hidden", name="postingId", value="<%=postingId%>">
+<br>
+<input type="text" size="50" width="40%" name="comment" placeholder="댓글을 입력하세요."><input type="submit" value="작성">
+</form>
+</center>
+</body>
+</html>
+
+<script type="text/javascript">
+$(".update").on("click", function(){
+   var uid = this.id;
+   var tmp = $("#d"+uid).val();
+   var ttmp = decodeURI(tmp);
+   $("#a"+uid).val(ttmp);
+/* 
+   update를 클릭하면 클릭한객체 this의 id값을 받아와서 저장한다 
+   id값을 바탕으로 수정하고자하는 textarea의 value값을 받아와서 tmp에 저장 
+   url로 보내는값에 decode한 ttmp를 저장한다
+   그리고 update라는 form의 액션을 postingView로 주고 get형식으로 전송한다
+*/
+   $("#update").attr({action:"/postingView", method:'get'}).submit();
+});
+
+function cancel(){ 
+      $('.comm_modify').css("display","none");
+      $('._commentData').css("display", "none");
+}
+/* 댓글에서 수정누르면 수정할수 있는 영역 보여주게 하고 숨기는 기능 구현 */ 
+   $("._btnModifyForm").on("click", function(){
+   var cid = this.id; 
+   console.log(cid);
+      $("#contentModify"+cid).css("display","block");
+      $('#dnew'+cid).css("display", "block");
+   });
+</script>

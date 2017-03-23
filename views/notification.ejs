@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>공지사항 전파</title>
+  </head>
+  <body>
+<article id="wrapper" align:center>
+   <div id="chat">
+      <div id="world">
+         <div class="room_chat" align:center>
+            <div id="message"></div>
+            <input type="text" id="chat_message" value="noti">
+            <button id="send_message">send</button>
+         </div>
+      </div>
+   </div>
+</article>   
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+<script type="text/javascript">
+var ck=document.cookie.toString();
+var tmp=ck.split('=');
+var qwer = tmp[1];
+   var socket=io.connect();
+   socket.on('smart', function(data){
+      var output = data.split('+');
+     if(output[1]=='root'){
+      $('#message').css("color","orange");
+      $('#message').append('[공지사항]: '+output[0]+'<BR>');
+     }
+   });
+   document.getElementById('send_message').onclick=function(){
+     var text = document.getElementById('chat_message').value +'+'+qwer;
+     socket.emit('sendmsg',text);
+     $('#chat_message').val('');
+};
+</script>
+
+ </body>
+</html>
+
+
